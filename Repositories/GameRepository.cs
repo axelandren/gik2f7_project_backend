@@ -18,8 +18,8 @@ namespace ProjektWebApi.Repositories
 
             games = new List<Game> {
                 new Game() { Name = "League" , Id = 1},
-                new Game() { Name = "Hearts of Iron", Id = 2 },
-                new Game() { Name = "Counter-Strike", Id = 3 }
+                new Game() { Name = "Hearts of Iron", Id = 1 },
+                new Game() { Name = "Counter-Strike", Id = 1 }
             };
         }
         public async Task<Game> Add(Game game)

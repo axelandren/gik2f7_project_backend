@@ -25,17 +25,19 @@ namespace ProjektWebApi.Controllers
             var games = await gr.Get();
             return games;
         }
+        
         [HttpGet("{id}")]
         public async Task<Game> GetGame(int id)
         {
             return await gr.Get(id);
-            //return games.FirstOrDefault<Game>(e => e.Id == id);
         }
+
         [HttpPost]
         public async Task<Game> Add(Game newGame)
         {
             return await gr.Add(newGame);
         }
+
         [HttpDelete("{id}")]
         public async Task<bool> Delete(int id)
         {
