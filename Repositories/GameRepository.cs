@@ -6,6 +6,7 @@ using Microsoft.Data.Sqlite;
 using ProjektWebApi.Database;
 using ProjektWebApi.Models;
 
+// GameRepository handles database operations
 namespace ProjektWebApi.Repositories
 {
     public class GameRepository : IGameRepository
@@ -20,12 +21,13 @@ namespace ProjektWebApi.Repositories
         {
             using(var connection = new SqliteConnection(databaseConfig.Name))
             {
-                var res = await connection.ExecuteAsync("INSERT INTO Games (Name, Description) VALUES (@Name, @Description)", game);
+                var res = await connection.ExecuteAsync("INSERT INTO Games (Name, Description, Grade) VALUES (@Name, @Description, @Grade)", game);
                 var lastInsert = await connection.QueryAsync<Game>("SELECT Id FROM Games ORDER BY Id DESC");
                 return new Game()
                 {
                     Name = game.Name,
                     Description = game.Description,
+                    Grade = game.Grade,
                     Id = lastInsert.FirstOrDefault<Game>().Id
                 };
             }
@@ -51,7 +53,7 @@ namespace ProjektWebApi.Repositories
         {
             using(var con = new SqliteConnection(databaseConfig.Name))
             {
-                var res = await con.QueryAsync<Game>("SELECT Id, Name, Description, Image FROM Games ORDER BY Name ASC");
+                var res = await con.QueryAsync<Game>("SELECT Id, Name, Description, Grade, Image FROM Games ORDER BY Name ASC");
                 return res;
             }
         }
@@ -60,15 +62,18 @@ namespace ProjektWebApi.Repositories
         {
             using(var con = new SqliteConnection(databaseConfig.Name))
             {
-                var res = await con.QueryAsync<Game>("SELECT Id, Name, Description, Image FROM Games WHERE Id=@Id", new { Id });
+                var res = await con.QueryAsync<Game>("SELECT Id, Name, Description, Grade, Image FROM Games WHERE Id=@Id", new { Id });
                 return res.FirstOrDefault<Game>();
             }
         }
 
-        public Task<Game> Update(Game game)
+        public async Task<Game> Update(Game game)
         {
-            throw new System.NotImplementedException();
+            using(var con = new SqliteConnection(databaseConfig.Name))
+            {
+                var res = await con.QueryAsync<Game>("UPDATE Games SET Name=@Name, Description=@Description, Image=@Image WHERE Id=@Id", game);
+                return game;
+            }
         }
     }
 }
- 

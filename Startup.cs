@@ -66,7 +66,7 @@ namespace ProjektWebApi
             {
                 endpoints.MapControllers();
             });
-            // run setup to access database
+            // Run setup to access database
             serviceProvider.GetService<IDatabaseBootstrap>().Setup();
         }
     }
