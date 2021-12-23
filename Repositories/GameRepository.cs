@@ -15,12 +15,6 @@ namespace ProjektWebApi.Repositories
         public GameRepository(DatabaseConfig dbConfig)
         {
             databaseConfig = dbConfig;
-
-            games = new List<Game> {
-                new Game() { Name = "League" , Id = 1},
-                new Game() { Name = "Hearts of Iron", Id = 1 },
-                new Game() { Name = "Counter-Strike", Id = 1 }
-            };
         }
         public async Task<Game> Add(Game game)
         {
@@ -28,8 +22,12 @@ namespace ProjektWebApi.Repositories
             {
                 var res = await connection.ExecuteAsync("INSERT INTO Games (Name, Description) VALUES (@Name, @Description)", game);
                 var lastInsert = await connection.QueryAsync<Game>("SELECT Id FROM Games ORDER BY Id DESC");
-                game.Id = lastInsert.FirstOrDefault<Game>().Id;
-                return game;
+                return new Game()
+                {
+                    Name = game.Name,
+                    Description = game.Description,
+                    Id = lastInsert.FirstOrDefault<Game>().Id
+                };
             }
         }
 
@@ -37,7 +35,7 @@ namespace ProjektWebApi.Repositories
         {
             using(var connection = new SqliteConnection(databaseConfig.Name))
             {
-                var res = await connection.ExecuteAsync("DELETE FROM Games WHERE Id=@Id,", new { Id });
+                var res = await connection.ExecuteAsync("DELETE FROM Games WHERE Id=@Id", new { Id });
                 if(res > -1)
                 {
                     return true;
@@ -49,20 +47,22 @@ namespace ProjektWebApi.Repositories
             }
         }
 
-        public Task<IEnumerable<Game>> Get()
+        public async Task<IEnumerable<Game>> Get()
         {
-            var task = Task.Run<IEnumerable<Game>>(() => {
-                return games;
-            });
-            return task;
+            using(var con = new SqliteConnection(databaseConfig.Name))
+            {
+                var res = await con.QueryAsync<Game>("SELECT Id, Name, Description, Image FROM Games ORDER BY Name ASC");
+                return res;
+            }
         }
 
-        public Task<Game> Get(int Id)
+        public async Task<Game> Get(int Id)
         {
-            var task = Task.Run<Game>(() => {
-                return games.FirstOrDefault(e => e.Id == Id);
-            });
-            return task;
+            using(var con = new SqliteConnection(databaseConfig.Name))
+            {
+                var res = await con.QueryAsync<Game>("SELECT Id, Name, Description, Image FROM Games WHERE Id=@Id", new { Id });
+                return res.FirstOrDefault<Game>();
+            }
         }
 
         public Task<Game> Update(Game game)
@@ -71,3 +71,4 @@ namespace ProjektWebApi.Repositories
         }
     }
 }
+ 
