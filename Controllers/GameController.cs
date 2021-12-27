@@ -24,6 +24,12 @@ namespace ProjektWebApi.Controllers
             gr = repo;
         }
 
+        [HttpPost]
+        public async Task<Game> Add(AddGame newGame)
+        {
+            return await gr.Add(newGame);
+        }
+
         [HttpGet]
         public async Task<IEnumerable<Game>> Get()
         {
@@ -36,10 +42,10 @@ namespace ProjektWebApi.Controllers
             return await gr.Get(id);
         }
 
-        [HttpPost]
-        public async Task<Game> Add(AddGame newGame)
+        [HttpPut("{id}")]
+        public async Task<Game> UpdateGame(Game game)
         {
-            return await gr.Add(newGame);
+            return await gr.Update(game);
         }
 
         [HttpDelete("{id}")]
@@ -48,8 +54,8 @@ namespace ProjektWebApi.Controllers
             return await gr.Delete(id);
         }
 
-        [HttpPost("img")]
-        public async Task<Game> AddGameImage([FromForm] PostGameImage gameImage)
+        [HttpPut("img")]
+        public async Task<Game> AddGameImage([FromForm] PutGameImage gameImage)
         {
             Game exGame = await gr.Get(gameImage.Id);
 

@@ -15,7 +15,7 @@ namespace ProjektWebApi.Models
     {
         private new int Id { get; set; }
     }
-    public class PostGameImage
+    public class PutGameImage
     {
         public int Id { get; set; }
         public IFormFile postImage { get; set; }

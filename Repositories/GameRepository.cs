@@ -28,6 +28,7 @@ namespace ProjektWebApi.Repositories
                     Name = game.Name,
                     Description = game.Description,
                     Grade = game.Grade,
+                    Image = game.Image,
                     Id = lastInsert.FirstOrDefault<Game>().Id
                 };
             }
@@ -71,7 +72,7 @@ namespace ProjektWebApi.Repositories
         {
             using(var con = new SqliteConnection(databaseConfig.Name))
             {
-                var res = await con.QueryAsync<Game>("UPDATE Games SET Name=@Name, Description=@Description, Image=@Image WHERE Id=@Id", game);
+                var res = await con.QueryAsync<Game>("UPDATE Games SET Name=@Name, Description=@Description, Grade=@Grade, Image=@Image WHERE Id=@Id", game);
                 return game;
             }
         }
