@@ -12,11 +12,11 @@ namespace ProjektWebApi.Repositories
     public class GameRepository : IGameRepository
     {
         private readonly DatabaseConfig databaseConfig;
-        private List<Game> games;
         public GameRepository(DatabaseConfig dbConfig)
         {
             databaseConfig = dbConfig;
         }
+        
         public async Task<Game> Add(Game game)
         {
             using(var connection = new SqliteConnection(databaseConfig.Name))
@@ -31,22 +31,6 @@ namespace ProjektWebApi.Repositories
                     Image = game.Image,
                     Id = lastInsert.FirstOrDefault<Game>().Id
                 };
-            }
-        }
-
-        public async Task<bool> Delete(int Id)
-        {
-            using(var connection = new SqliteConnection(databaseConfig.Name))
-            {
-                var res = await connection.ExecuteAsync("DELETE FROM Games WHERE Id=@Id", new { Id });
-                if(res > -1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             }
         }
 
@@ -74,6 +58,22 @@ namespace ProjektWebApi.Repositories
             {
                 var res = await con.QueryAsync<Game>("UPDATE Games SET Name=@Name, Description=@Description, Grade=@Grade, Image=@Image WHERE Id=@Id", game);
                 return game;
+            }
+        }
+
+        public async Task<bool> Delete(int Id)
+        {
+            using(var connection = new SqliteConnection(databaseConfig.Name))
+            {
+                var res = await connection.ExecuteAsync("DELETE FROM Games WHERE Id=@Id", new { Id });
+                if(res > -1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
     }

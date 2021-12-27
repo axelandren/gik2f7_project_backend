@@ -54,48 +54,50 @@ namespace ProjektWebApi.Controllers
             return await gr.Delete(id);
         }
 
-        [HttpPut("img")]
-        public async Task<Game> AddGameImage([FromForm] PutGameImage gameImage)
-        {
-            Game exGame = await gr.Get(gameImage.Id);
+        // For images if project stores files, currently Front-end is using internet URLs for images
 
-            var file = gameImage.postImage;
-            var ext = Path.GetExtension(file.FileName).Replace(".", string.Empty);
-            string fName = exGame.Id + "." + ext;
+        // [HttpPut("img")]
+        // public async Task<Game> AddGameImage([FromForm] PutGameImage gameImage)
+        // {
+        //     Game exGame = await gr.Get(gameImage.Id);
 
-            string path = Path.Combine(env.ContentRootPath, "Uploads\\" + fName);
-            using(var stream = new FileStream(path, FileMode.OpenOrCreate))
-            {
-                await file.CopyToAsync(stream);
-            }
+        //     var file = gameImage.postImage;
+        //     var ext = Path.GetExtension(file.FileName).Replace(".", string.Empty);
+        //     string fName = exGame.Id + "." + ext;
 
-            string url = "Uploads\\" + fName;
-            exGame.Image = url;
-            await gr.Update(exGame);
-            return exGame;
-        }
+        //     string path = Path.Combine(env.ContentRootPath, "Uploads\\" + fName);
+        //     using(var stream = new FileStream(path, FileMode.OpenOrCreate))
+        //     {
+        //         await file.CopyToAsync(stream);
+        //     }
 
-        [HttpGet("img/{id}")]
-        public async Task<IActionResult> GetImage(int id)
-        {
-            Game game = await gr.Get(id);
-            if(game == null)
-            {
-                throw new ArgumentException("Felaktigt id");
-            }
-            if(game.Image == null)
-            {
-                throw new ArgumentException("Spelet har ingen bild");
-            }
-            var imgSrc = Path.Combine(env.ContentRootPath, game.Image);
-            if(System.IO.File.Exists(imgSrc))
-            {
-                return PhysicalFile(imgSrc, "image/png");
-            }
-            else
-            {
-                throw new ArgumentException("Fil ej funnen, eller fel filtyp (krävs .png)");
-            }
-        }
+        //     string url = "Uploads\\" + fName;
+        //     exGame.Image = url;
+        //     await gr.Update(exGame);
+        //     return exGame;
+        // }
+
+        // [HttpGet("img/{id}")]
+        // public async Task<IActionResult> GetImage(int id)
+        // {
+        //     Game game = await gr.Get(id);
+        //     if(game == null)
+        //     {
+        //         throw new ArgumentException("Felaktigt id");
+        //     }
+        //     if(game.Image == null)
+        //     {
+        //         throw new ArgumentException("Spelet har ingen bild");
+        //     }
+        //     var imgSrc = Path.Combine(env.ContentRootPath, game.Image);
+        //     if(System.IO.File.Exists(imgSrc))
+        //     {
+        //         return PhysicalFile(imgSrc, "image/png");
+        //     }
+        //     else
+        //     {
+        //         throw new ArgumentException("Fil ej funnen, eller fel filtyp (krävs .png)");
+        //     }
+        // }
     }
 }
